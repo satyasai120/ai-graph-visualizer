@@ -39,4 +39,15 @@ class GraphBuilder:
                 relation="PAID_BY"
             )
 
+        for _, row in self.orders.iterrows():
+            if 'product_id' in row:
+             product_node = f"product_{row['product_id']}"
+             self.graph.add_node(product_node, type="product")
+
+            self.graph.add_edge(
+            f"order_{row['order_id']}",
+            product_node,
+            relation="CONTAINS_PRODUCT"
+        )
+
         return self.graph

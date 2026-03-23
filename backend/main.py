@@ -18,13 +18,19 @@ engine = QueryEngine(graph)
 
 @app.get("/query")
 def query(q: str):
-    intent = parse_query(q)
+    parsed = parse_query(q)
+    intent = parsed["intent"]
+    params = parsed.get("parameters", {})
 
     if intent == "unbilled_orders":
         return {"result": engine.get_unbilled_orders()}
 
     elif intent == "trace_order":
-        order_id = q.split()[-1]
-        return {"result": engine.trace_order_flow(order_id)}
+        return {
+            "result": engine.trace_order_flow(params.get("order_id"))
+        }
+
+    elif intent == "top_products":
+        return {"result": engine.top_products()}
 
     return {"error": "Unknown query"}
